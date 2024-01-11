@@ -17,6 +17,7 @@ export const Column: React.FC<ColumnProps> = ({ id, children }) => {
     const column = useBoardStore.use.columns()[id];
     const addTask = useBoardStore.use.addTask();
     const columnOrder = useBoardStore.use.columnOrder();
+    const deleteColumn = useBoardStore.use.deleteColumn();
 
     const colIndex = columnOrder.findIndex((d) => d === column.id);
 
@@ -49,7 +50,12 @@ export const Column: React.FC<ColumnProps> = ({ id, children }) => {
                 className='sticky top-0 flex justify-between px-4 pt-4'
             >
                 {column.title}
-                <Button className='h-[40] p-2'>
+                <Button
+                    className='h-[40] p-2'
+                    onClick={() => {
+                        deleteColumn(id);
+                    }}
+                >
                     <Trash2 size={16} />
                 </Button>
             </CardTitle>

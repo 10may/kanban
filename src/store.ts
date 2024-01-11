@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { type UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
@@ -33,6 +34,7 @@ export type Actions = {
         activeColumnId: UniqueIdentifier,
         overColumnId: UniqueIdentifier,
     ) => void;
+    deleteColumn: (columnId: UniqueIdentifier) => void;
     setActiveColumnId: (id: UniqueIdentifier | null) => void;
 };
 
@@ -114,6 +116,14 @@ export const useBoardStoreBase = create<BoardState>()(
                     overColumnIndex,
                 );
                 state.activeColumnId = null;
+            });
+        },
+        deleteColumn(columnId) {
+            set((state) => {
+                state.columnOrder = state.columnOrder.filter(
+                    (d) => d !== columnId,
+                );
+                delete state.columns[columnId];
             });
         },
         setActiveColumnId(id) {
