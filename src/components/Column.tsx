@@ -1,3 +1,4 @@
+import { ITEM_TYPE } from '@/constants';
 import { cn } from '@/lib/utils';
 import { useBoardStore } from '@/store';
 import { type UniqueIdentifier } from '@dnd-kit/core';
@@ -14,12 +15,10 @@ export type ColumnProps = {
 };
 
 export const Column: React.FC<ColumnProps> = ({ id, children }) => {
-    const column = useBoardStore.use.columns()[id];
+    const column = useBoardStore.use.columns().get(id);
     const addTask = useBoardStore.use.addTask();
     const columnOrder = useBoardStore.use.columnOrder();
     const deleteColumn = useBoardStore.use.deleteColumn();
-
-    const colIndex = columnOrder.findIndex((d) => d === column.id);
 
     const {
         attributes,
@@ -28,10 +27,22 @@ export const Column: React.FC<ColumnProps> = ({ id, children }) => {
         transform,
         transition,
         isDragging,
-    } = useSortable({ id });
+    } = useSortable({
+        id,
+        data: {
+            type: ITEM_TYPE.COLUMN,
+        },
+    });
+
+    if (!column) {
+        console.error(`Column: ${id} not found`);
+        return null;
+    }
+
+    const colIndex = columnOrder.findIndex((d) => d === column.id);
 
     const style = {
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Translate.toString(transform),
         transition,
     };
 
@@ -41,7 +52,7 @@ export const Column: React.FC<ColumnProps> = ({ id, children }) => {
             style={style}
             {...attributes}
             className={cn(
-                'relative flex h-fit max-h-full min-w-80 max-w-[322px] flex-col gap-4 bg-slate-200 pb-2', // p-1 pb-2 pt-4',
+                'relative flex h-fit max-h-full min-w-80 max-w-[322px] flex-col gap-4 bg-slate-200 pb-2',
                 isDragging && 'bg-slate-100 *:invisible',
             )}
         >
@@ -51,7 +62,7 @@ export const Column: React.FC<ColumnProps> = ({ id, children }) => {
             >
                 {column.title}
                 <Button
-                    className='h-[40] p-2'
+                    size={'sm'}
                     onClick={() => {
                         deleteColumn(id);
                     }}

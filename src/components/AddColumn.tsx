@@ -30,7 +30,6 @@ export const AddColumn = () => {
                     className='mt-3 min-w-full'
                     onClick={() => {
                         addColumn({
-                            // id: columnOrder.length + 1,
                             id: crypto.randomUUID(),
                             title: value,
                             taskIds: [],
